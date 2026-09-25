@@ -16,6 +16,22 @@
 					</div>
 				</div>
 			}
+			@if (getRouteLength(); as routeLength) {
+				<div class="row gap center">
+					<div class="row gap center" [pTooltip]="t('route.routeLength')" tooltipPosition="left">
+						<iconify-icon icon="mdi:distance" aria-hidden="true"></iconify-icon>
+						<div>{{ routeLength }}</div>
+					</div>
+				</div>
+			}
+			@if (getAverageSpeed(); as averageSpeed) {
+				<div class="row gap center">
+					<div class="row gap center" [pTooltip]="t('route.averageSpeed')" tooltipPosition="left">
+						<iconify-icon icon="mdi:speed" aria-hidden="true"></iconify-icon>
+						<div>{{ averageSpeed }}</div>
+					</div>
+				</div>
+			}
 			<div class="row gap center">
 				<div class="row gap center" [pTooltip]="t('route.depotsForRoute')" tooltipPosition="left">
 					<iconify-icon icon="mdi:depot" aria-hidden="true"></iconify-icon>
