@@ -60,6 +60,14 @@
 					<p-toggle-switch inputId="themeToggle" formControlName="themeToggle" (onChange)="changeTheme($event.checked)"/>
 					<label for="themeToggle">{{ t('mainPanel.darkTheme') }}</label>
 				</div>
+				<div class="row gap-small center">
+					<p-toggle-switch inputId="hideStationNamesToggle" formControlName="hideStationNamesToggle" (onChange)="changeHideStationNames($event.checked)"/>
+					<label for="hideStationNamesToggle">{{ t('mainPanel.hideStationNames') }}</label>
+				</div>
+				<div class="row gap-small center">
+					<p-toggle-switch inputId="hidePlayersToggle" formControlName="hidePlayersToggle" (onChange)="changeHidePlayers($event.checked)"/>
+					<label for="hidePlayersToggle">{{ t('mainPanel.hidePlayers') }}</label>
+				</div>
 				<a class="version" href="https://github.com/Minecraft-Transit-Railway/Transport-Simulation-Core" target="_blank">
 					<div class="column">
 						<div>Transport Simulation Core</div>
