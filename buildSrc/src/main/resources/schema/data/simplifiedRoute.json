@@ -11,6 +11,9 @@
 		"name": {
 			"type": "string"
 		},
+		"routeNumber": {
+            "type": "string"
+		},
 		"color": {
 			"type": "integer",
 			"minimum": 0,
