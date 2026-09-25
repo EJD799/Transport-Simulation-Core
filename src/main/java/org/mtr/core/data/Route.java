@@ -22,6 +22,7 @@ public final class Route extends RouteSchema {
 
 	public final ObjectArrayList<Depot> depots = new ObjectArrayList<>();
 	public final LongArrayList durations = new LongArrayList();
+	public long routeLength;
 
 	public Route(TransportMode transportMode, Data data) {
 		super(transportMode, data);

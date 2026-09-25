@@ -106,6 +106,14 @@ export class RoutePanelComponent {
 		return this.routeVariationService.getTotalDurationSeconds();
 	}
 
+	getRouteLength() {
+		return this.routeVariationService.getRouteLength();
+	}
+
+	getAverageSpeed() {
+		return this.routeVariationService.getAverageSpeed();
+	}
+
 	hasDurations() {
 		return this.routeVariationService.routeStationDetails()[0]?.durationSeconds;
 	}

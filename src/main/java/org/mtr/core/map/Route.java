@@ -18,6 +18,7 @@ public final class Route extends RouteSchema {
 			}
 		});
 		durations.addAll(route.durations);
+		routeLength = route.routeLength;
 		route.depots.forEach(depot -> depots.add(depot.getName()));
 	}
 }

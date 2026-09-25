@@ -11,6 +11,7 @@ export class Route {
 	public readonly circularState: "NONE" | "CLOCKWISE" | "ANTICLOCKWISE";
 	public readonly hidden: boolean;
 	public readonly depots: string[];
+	public readonly routeLength : number;
 	public readonly routePlatforms: RoutePlatform[] = [];
 
 	constructor(routeDTO: RouteDTO) {
@@ -22,6 +23,7 @@ export class Route {
 		this.circularState = routeDTO.circularState;
 		this.hidden = routeDTO.hidden;
 		this.depots = routeDTO.depots;
+		this.routeLength = routeDTO.routeLength;
 	}
 }
 

@@ -23,6 +23,8 @@
 		"players": "玩家 ({{count}})",
 		"noPlayersOnline": "目前沒有玩家在綫上。",
 		"darkTheme": "深色主題",
+		"hideStatioNames": "隐藏站点名称",
+		"hidePlayers": "隐藏玩家",
 		"language": "語言"
 	},
 	"station": {
@@ -44,6 +46,8 @@
 		"title": "路綫詳情",
 		"routeVariation": "路綫方向",
 		"totalDuration": "全程時間",
+		"routeLength": "路线长度",
+		"averageSpeed": "平均速度",
 		"depotsForRoute": "路綫車廠",
 		"showTravelTimes": "顯示行車時間",
 		"showDwellTimes": "顯示停站時間",
@@ -64,6 +68,7 @@
 		"hidden": "隱藏",
 		"solid": "實綫",
 		"hollow": "空心",
+		"triple": "三倍",
 		"dashed": "虛綫",
 		"dotted": "點綫"
 	},

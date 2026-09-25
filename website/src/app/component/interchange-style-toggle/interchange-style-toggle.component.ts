@@ -22,7 +22,12 @@ import {TranslocoDirective} from "@jsverse/transloco";
 export class InterchangeStyleToggleComponent {
 	private readonly mapDataService = inject(MapDataService);
 
-	protected readonly interchangeStyleOptions: { icon: string, value: "DOTTED" | "HOLLOW", tooltip: string }[] = [
+	protected readonly interchangeStyleOptions: { icon: string, value: "HIDDEN" | "DOTTED" | "HOLLOW", tooltip: string }[] = [
+		{
+			icon: "mdi:hide",
+			value: "HIDDEN",
+			tooltip: "visibility.hidden",
+		},
 		{
 			icon: "fluent:dashed",
 			value: "DOTTED",

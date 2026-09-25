@@ -23,7 +23,7 @@ export class VisibilityToggleComponent {
 	private readonly mapDataService = inject(MapDataService);
 
 	readonly routeType = input.required<string>();
-	protected readonly visibilityOptions: { icon: string, value: "HIDDEN" | "SOLID" | "HOLLOW" | "DASHED", tooltip: string }[] = [
+	protected readonly visibilityOptions: { icon: string, value: "HIDDEN" | "SOLID" | "HOLLOW" | "TRIPLE" | "DASHED", tooltip: string }[] = [
 		{
 			icon: "mdi:hide",
 			value: "HIDDEN",
@@ -38,6 +38,11 @@ export class VisibilityToggleComponent {
 			icon: "fluent:hollow",
 			value: "HOLLOW",
 			tooltip: "visibility.hollow",
+		},
+		{
+			icon: "fluent:triple",
+			value: "TRIPLE",
+			tooltip: "visibility.triple",
 		},
 		{
 			icon: "fluent:dashed",

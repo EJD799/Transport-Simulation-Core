@@ -119,6 +119,14 @@ export class RouteVariationService extends SelectableDataServiceBase<void, Route
 	public getTotalDurationSeconds() {
 		return Math.round(this.totalDuration() / 1000);
 	}
+
+	public getRouteLength() {
+
+	}
+
+	public getAverageSpeed() {
+		
+	}
 }
 
 @Injectable({providedIn: "root"})

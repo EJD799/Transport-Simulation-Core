@@ -23,6 +23,8 @@
 		"players": "Players ({{count}})",
 		"noPlayersOnline": "There are no players online.",
 		"darkTheme": "Dark Theme",
+		"hideStatioNames": "Hide Station Names",
+		"hidePlayers": "Hide Players",
 		"language": "Language"
 	},
 	"station": {
@@ -44,6 +46,8 @@
 		"title": "Route Details",
 		"routeVariation": "Route Variation",
 		"totalDuration": "Total Duration",
+		"routeLength": "Route Length",
+		"averageSpeed": "Average Speed",
 		"depotsForRoute": "Depot(s) for Route",
 		"showTravelTimes": "Show Travel Times",
 		"showDwellTimes": "Show Dwell Times",
@@ -64,6 +68,7 @@
 		"hidden": "Hidden",
 		"solid": "Solid",
 		"hollow": "Hollow",
+		"triple": "Triple",
 		"dashed": "Dashed",
 		"dotted": "Dotted"
 	},
@@ -78,7 +83,7 @@
 		"bus_normal": "Bus",
 		"bus_light_rail": "Minibus",
 		"bus_high_speed": "Express Bus",
-		"airplane_normal": "Aeroplane"
+		"airplane_normal": "Airplane"
 	},
 	"search": {
 		"stations": "Stations",

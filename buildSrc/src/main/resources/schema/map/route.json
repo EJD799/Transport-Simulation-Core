@@ -44,6 +44,9 @@
 			"items": {
 				"type": "string"
 			}
+		},
+		"routeLength": {
+			"type": "number"
 		}
 	},
 	"required": [

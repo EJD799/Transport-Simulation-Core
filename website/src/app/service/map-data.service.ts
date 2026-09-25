@@ -23,8 +23,8 @@ export class MapDataService extends DataServiceBase<{ data: StationsAndRoutesDTO
 
 	public readonly routes = signal<Route[]>([]);
 	public readonly stations = signal<Station[]>([]);
-	public readonly routeTypeVisibility: WritableSignal<Record<string, "HIDDEN" | "SOLID" | "HOLLOW" | "DASHED">>;
-	public readonly interchangeStyle: WritableSignal<"DOTTED" | "HOLLOW">;
+	public readonly routeTypeVisibility: WritableSignal<Record<string, "HIDDEN" | "SOLID" | "HOLLOW" | "TRIPLE" | "DASHED">>;
+	public readonly interchangeStyle: WritableSignal<"HIDDEN" | "DOTTED" | "HOLLOW">;
 	public readonly stationConnections = signal<StationConnection[]>([]);
 	public readonly lineConnections = signal<LineConnection[]>([]);
 	public readonly stationsForMap = signal<StationForMap[]>([]);
@@ -88,7 +88,7 @@ export class MapDataService extends DataServiceBase<{ data: StationsAndRoutesDTO
 			this.stations.set(stations);
 
 			// Update route type visibility
-			const routeTypeVisibility: Record<string, "HIDDEN" | "SOLID" | "HOLLOW" | "DASHED"> = {...this.routeTypeVisibility()};
+			const routeTypeVisibility: Record<string, "HIDDEN" | "SOLID" | "HOLLOW" | "TRIPLE" | "DASHED"> = {...this.routeTypeVisibility()};
 			Object.keys(ROUTE_TYPES).forEach(routeType => {
 				if (availableRouteTypes.includes(routeType)) {
 					setIfUndefined(routeTypeVisibility, routeType, () => "HIDDEN");
@@ -110,16 +110,16 @@ export class MapDataService extends DataServiceBase<{ data: StationsAndRoutesDTO
 		}, SLOW_REFRESH_INTERVAL_MILLIS, dimensionService);
 
 		const cookieInterchangeStyle = getCookie("interchange_style");
-		this.interchangeStyle = signal<"DOTTED" | "HOLLOW">(cookieInterchangeStyle === "DOTTED" || cookieInterchangeStyle === "HOLLOW" ? cookieInterchangeStyle : "DOTTED");
+		this.interchangeStyle = signal<"HIDDEN" | "DOTTED" | "HOLLOW">(cookieInterchangeStyle === "HIDDEN" || cookieInterchangeStyle === "DOTTED" || cookieInterchangeStyle === "HOLLOW" ? cookieInterchangeStyle : "DOTTED");
 
-		const routeTypeVisibility: Record<string, "HIDDEN" | "SOLID" | "HOLLOW" | "DASHED"> = {};
+		const routeTypeVisibility: Record<string, "HIDDEN" | "SOLID" | "HOLLOW" | "TRIPLE" | "DASHED"> = {};
 		Object.keys(ROUTE_TYPES).forEach(routeTypeKey => {
 			const visibility = getCookie(`visibility_${routeTypeKey}`);
-			if (visibility === "HIDDEN" || visibility === "SOLID" || visibility === "HOLLOW" || visibility === "DASHED") {
+			if (visibility === "HIDDEN" || visibility === "SOLID" || visibility === "HOLLOW" || visibility === "TRIPLE" || visibility === "DASHED") {
 				routeTypeVisibility[routeTypeKey] = visibility;
 			}
 		});
-		this.routeTypeVisibility = signal<Record<string, "HIDDEN" | "SOLID" | "HOLLOW" | "DASHED">>(routeTypeVisibility);
+		this.routeTypeVisibility = signal<Record<string, "HIDDEN" | "SOLID" | "HOLLOW" | "TRIPLE" | "DASHED">>(routeTypeVisibility);
 
 		this.fetchData("");
 	}
