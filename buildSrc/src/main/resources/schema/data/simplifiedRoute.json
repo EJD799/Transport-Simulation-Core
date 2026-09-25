@@ -32,8 +32,8 @@
 	"required": [
 		"id",
 		"name",
+		"routeNumber",
 		"color",
-		"destination",
 		"circularState"
 	]
 }
