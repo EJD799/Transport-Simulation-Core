@@ -19,7 +19,7 @@ import org.mtr.core.serializer.ReaderBase;
 public final class SimplifiedRoute extends SimplifiedRouteSchema implements Comparable<SimplifiedRoute> {
 
 	private SimplifiedRoute(Route route) {
-		super(route.getId(), route.getName(), route.getColor(), route.getCircularState());
+		super(route.getId(), route.getName(), route.getRouteNumber(), route.getColor(), route.getCircularState());
 		for (int i = 0; i < route.getRoutePlatforms().size(); i++) {
 			final Platform platform = route.getRoutePlatforms().get(i).platform;
 			final Station station = platform == null ? null : platform.area;
@@ -50,6 +50,10 @@ public final class SimplifiedRoute extends SimplifiedRouteSchema implements Comp
 
 	public String getName() {
 		return name;
+	}
+
+	public String getRouteNumber() {
+		return routeNumber;
 	}
 
 	public int getColor() {
