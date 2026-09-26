@@ -59,14 +59,14 @@ public final class Rail extends RailSchema {
 		);
 	}
 
-	public static Rail newHelicopterRail(Position position1, Angle angle1, Position position2, Angle angle2, Shape shape, double verticalRadius, long tiltPoints, double tiltAngleDegrees1, double tiltAngleDistance1a, double tiltAngleDegrees1a, double tiltAngleDegrees1b, double tiltAngleDistance1b, double tiltAngleDegreesMiddle, double tiltAngleDistance2b, double tiltAngleDegrees2b, double tiltAngleDegrees2a, double tiltAngleDistance2a, double tiltAngleDegrees2, ObjectArrayList<String> styles, TransportMode transportMode) {
+	public static Rail newHelicopterRail(Position position1, Angle angle1, Position position2, Angle angle2, Shape shape, double verticalRadius, long tiltPoints, double tiltAngleDegrees1, double tiltAngleDistance1a, double tiltAngleDegrees1a, double tiltAngleDegrees1b, double tiltAngleDistance1b, double tiltAngleDegreesMiddle, double tiltAngleDistance2b, double tiltAngleDegrees2b, double tiltAngleDegrees2a, double tiltAngleDistance2a, double tiltAngleDegrees2, ObjectArrayList<String> styles) {
 		return new Rail(
 			position1, angle1,
 			position2, angle2,
 			shape, verticalRadius, tiltPoints,
 			tiltAngleDegrees1, tiltAngleDistance1a, tiltAngleDegrees1a, tiltAngleDegrees1b, tiltAngleDistance1b, tiltAngleDegreesMiddle, tiltAngleDistance2b, tiltAngleDegrees2b, tiltAngleDegrees2a, tiltAngleDistance2a, tiltAngleDegrees2,
 			styles, 80, 80,
-			true, false, false, false, true, true, transportMode
+			true, false, false, false, true, true, TransportMode.AIRPLANE
 		);
 	}
 
