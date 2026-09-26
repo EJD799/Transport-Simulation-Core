@@ -31,6 +31,7 @@ const lineMaterialNormal = new LineMaterial({color: 0xFFFFFF, linewidth: 6 * SET
 const lineMaterialNormalDashed = new LineMaterial({color: 0xFFFFFF, linewidth: 6 * SETTINGS.scale * devicePixelRatio, vertexColors: true, dashed: true});
 const lineMaterialThin = new LineMaterial({color: 0xFFFFFF, linewidth: 3 * SETTINGS.scale * devicePixelRatio, vertexColors: true});
 const lineMaterialThinDashed = new LineMaterial({color: 0xFFFFFF, linewidth: 3 * SETTINGS.scale * devicePixelRatio, vertexColors: true, dashed: true});
+const lineMaterialTriple = new LineMaterial({color: 0xFFFFFF, linewidth: 1.5 * SETTINGS.scale * devicePixelRatio, vertexColors: true});
 
 @Component({
 	selector: "app-map",
@@ -85,6 +86,8 @@ export class MapComponent implements AfterViewInit {
 	private lineGeometryNormalDashed: LineGeometry | undefined;
 	private lineGeometryThin: LineGeometry | undefined;
 	private lineGeometryThinDashed: LineGeometry | undefined;
+	private lineGeometryTriple1: LineGeometry | undefined;
+	private lineGeometryTriple2: LineGeometry | undefined;
 	private pointsForLineConnection: Record<string, [number, number, boolean][]> = {};
 
 	private canvas() {
@@ -150,6 +153,7 @@ export class MapComponent implements AfterViewInit {
 				lineMaterialNormalDashed.resolution.set(clientWidth, clientHeight);
 				lineMaterialThin.resolution.set(clientWidth, clientHeight);
 				lineMaterialThinDashed.resolution.set(clientWidth, clientHeight);
+				lineMaterialTriple.resolution.set(clientWidth, clientHeight);
 				this.camera.updateProjectionMatrix();
 			}
 
@@ -195,6 +199,8 @@ export class MapComponent implements AfterViewInit {
 			this.lineGeometryNormalDashed = new LineGeometry();
 			this.lineGeometryThin = new LineGeometry();
 			this.lineGeometryThinDashed = new LineGeometry();
+			this.lineGeometryTriple1 = new LineGeometry();
+			this.lineGeometryTriple2 = new LineGeometry();
 			this.oneWayArrowGeometry = new THREE.BufferGeometry();
 			this.createStationConnections();
 			this.createLines(() => {
@@ -224,6 +230,14 @@ export class MapComponent implements AfterViewInit {
 			lineThinDashed = new Line2(this.lineGeometryThinDashed, lineMaterialThinDashed);
 			lineThinDashed.computeLineDistances();
 			this.scene.add(lineThinDashed);
+
+			const lineTriple1 = new Line2(this.lineGeometryTriple1, lineMaterialTriple);
+			lineTriple1.computeLineDistances();
+			this.scene.add(lineTriple1);
+
+			const lineTriple2 = new Line2(this.lineGeometryTriple2, lineMaterialTriple);
+			lineTriple2.computeLineDistances();
+			this.scene.add(lineTriple2);
 
 			this.scene.add(new THREE.Mesh(this.oneWayArrowGeometry, materialWithVertexColors));
 			this.updateLabels();
@@ -419,11 +433,15 @@ export class MapComponent implements AfterViewInit {
 		const positionsNormalDashed = [0, 0, -10000, 0, 0, -10000];
 		const positionsThin = [0, 0, -10000, 0, 0, -10000];
 		const positionsThinDashed = [0, 0, -10000, 0, 0, -10000];
+		const positionsTriple1 = [0, 0, -10000, 0, 0, -10000];
+		const positionsTriple2 = [0, 0, -10000, 0, 0, -10000];
 		const positionsArrow: number[] = [];
 		const colorsNormal = [0, 0, 0, 0, 0, 0];
 		const colorsNormalDashed = [0, 0, 0, 0, 0, 0];
 		const colorsThin = [0, 0, 0, 0, 0, 0];
 		const colorsThinDashed = [0, 0, 0, 0, 0, 0];
+		const colorsTriple1 = [0, 0, 0, 0, 0, 0];
+		const colorsTriple2 = [0, 0, 0, 0, 0, 0];
 		const colorsArrow: number[] = [];
 		const backgroundColor = this.getBackgroundColor();
 
@@ -442,6 +460,30 @@ export class MapComponent implements AfterViewInit {
 			MapComponent.setColor(color, colorsArrow, 9);
 		};
 
+		const offsetPoint = (
+			x: number,
+			y: number,
+			previousPoint: [number, number] | undefined,
+			nextPoint: [number, number] | undefined,
+			offset: number,
+		): [number, number] => {
+			const dx = nextPoint ? nextPoint[0] - x : x - previousPoint![0];
+			const dy = nextPoint ? nextPoint[1] - y : y - previousPoint![1];
+			const length = Math.sqrt(dx * dx + dy * dy);
+
+			if (length === 0) {
+				return [x, y];
+			}
+
+			const perpendicularX = -dy / length;
+			const perpendicularY = dx / length;
+
+			return [
+				x + perpendicularX * offset,
+				y + perpendicularY * offset,
+			];
+		};
+
 		this.mapDataService.lineConnections().forEach(({lineConnectionParts, direction1, direction2, x1, z1, x2, z2, stationId1, stationId2, length, relativeLength}) => {
 			const hidden = length * this.camera.zoom < 10;
 			for (let i = 0; i < lineConnectionParts.length; i++) {
@@ -454,6 +496,7 @@ export class MapComponent implements AfterViewInit {
 				const routeTypeVisibility = this.mapDataService.routeTypeVisibility()[color.split("|")[1]];
 				const dashed = routeTypeVisibility === "DASHED";
 				const hollow = routeTypeVisibility === "HOLLOW" || dashed;
+				const triple = routeTypeVisibility === "TRIPLE";
 				const adjustZ = lineSelected ? 20 : 0;
 				const lineZ = (hollow ? (oneWay === 0 ? -8 : -12) : (oneWay === 0 ? -2 : -5)) - relativeLength + adjustZ;
 
@@ -483,17 +526,44 @@ export class MapComponent implements AfterViewInit {
 				);
 
 				if (points.length >= 2) {
-					points.forEach(([x, y, offset]) => {
+					points.forEach(([x, y, offset], index) => {
 						const newZ = hidden || offset ? -10000 : lineZ;
+
 						(noService ? positionsNormalDashed : positionsNormal).push(x, -y, newZ);
 						MapComponent.setColor(newColorInt, (noService ? colorsNormalDashed : colorsNormal));
+
 						if (hollow) {
 							(dashed ? positionsThinDashed : positionsThin).push(x, -y, newZ + 1);
 							MapComponent.setColor(backgroundColor, (dashed ? colorsThinDashed : colorsThin));
 						}
-					});
 
-					this.pointsForLineConnection[ClientsService.getRouteConnectionKey(stationId1, stationId2, colorInt)] = points;
+						if (triple) {
+							const previousPoint = index > 0 ? [points[index - 1][0], points[index - 1][1]] as [number, number] : undefined;
+							const nextPoint = index < points.length - 1 ? [points[index + 1][0], points[index + 1][1]] as [number, number] : undefined;
+
+							const [triple1X, triple1Y] = offsetPoint(
+								x,
+								y,
+								previousPoint,
+								nextPoint,
+								2.25 * SETTINGS.scale / this.camera.zoom,
+							);
+
+							const [triple2X, triple2Y] = offsetPoint(
+								x,
+								y,
+								previousPoint,
+								nextPoint,
+								-2.25 * SETTINGS.scale / this.camera.zoom,
+							);
+
+							positionsTriple1.push(triple1X, -triple1Y, newZ + 1);
+							MapComponent.setColor(backgroundColor, colorsTriple1);
+
+							positionsTriple2.push(triple2X, -triple2Y, newZ + 2);
+							MapComponent.setColor(backgroundColor, colorsTriple2);
+						}
+					});
 				}
 
 				if (oneWayPoints.length >= 2) {
