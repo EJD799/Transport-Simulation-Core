@@ -817,16 +817,19 @@ public final class Siding extends SidingSchema implements Utilities {
 				}
 			}
 
+			final Long2DoubleOpenHashMap routeStartDistances = new Long2DoubleOpenHashMap();
+			routeStartDistances.defaultReturnValue(Double.NaN);
 			final ObjectArrayList<RoutePlatformInfo> routePlatformInfoList = new ObjectArrayList<>();
 			for (int i = 0; i < area.routes.size(); i++) {
 				final Route route = area.routes.get(i);
 				route.durations.clear();
+				route.routeLength = 0;
 				for (int j = 0; j < route.getRoutePlatforms().size(); j++) {
 					final long platformId = route.getRoutePlatforms().get(j).platform.getId();
 					if (j == 0 && !routePlatformInfoList.isEmpty() && Utilities.getElement(routePlatformInfoList, -1).platformId == platformId) {
 						routePlatformInfoList.removeLast();
 					}
-					routePlatformInfoList.add(new RoutePlatformInfo(route, i, platformId, route.getDestination(j)));
+					routePlatformInfoList.add(new RoutePlatformInfo(route, i, j, platformId, route.getDestination(j)));
 				}
 			}
 
@@ -897,6 +900,35 @@ public final class Siding extends SidingSchema implements Utilities {
 
 						if (routePlatformInfo.platformId != pathData.getSavedRailBaseId()) {
 							break;
+						}
+
+						if (routePlatformInfo.platformIndex == 0) {
+							routeStartDistances.put(routePlatformInfo.route.getId(), currentDistance);
+
+							// The previous route may have ended at this same platform.
+							if (routePlatformInfo.routeIndex > 0) {
+								final Route previousRoute = area.routes.get(routePlatformInfo.routeIndex - 1);
+								final RoutePlatformData previousLastPlatform = Utilities.getElement(previousRoute.getRoutePlatforms(), -1);
+
+								if (previousLastPlatform != null
+										&& previousLastPlatform.platform != null
+										&& previousLastPlatform.platform.getId() == routePlatformInfo.platformId) {
+
+									final double previousStartDistance = routeStartDistances.get(previousRoute.getId());
+
+									if (!Double.isNaN(previousStartDistance)) {
+										previousRoute.routeLength = currentDistance - previousStartDistance;
+									}
+								}
+							}
+						}
+
+						if (routePlatformInfo.platformIndex == routePlatformInfo.route.getRoutePlatforms().size() - 1) {
+							final double startDistance = routeStartDistances.get(routePlatformInfo.route.getId());
+
+							if (!Double.isNaN(startDistance)) {
+								routePlatformInfo.route.routeLength = currentDistance - startDistance;
+							}
 						}
 
 						if (!platformTripStopTimes.containsKey(pathData.getSavedRailBaseId())) {
@@ -989,11 +1021,12 @@ public final class Siding extends SidingSchema implements Utilities {
 		}
 	}
 
-	private record RoutePlatformInfo(Route route, int routeIndex, long platformId, String customDestination) {
+	private record RoutePlatformInfo(Route route, int routeIndex, int platformIndex, long platformId, String customDestination) {
 
-		private RoutePlatformInfo(Route route, int routeIndex, long platformId, @Nullable String customDestination) {
+		private RoutePlatformInfo(Route route, int routeIndex, int platformIndex, long platformId, @Nullable String customDestination) {
 			this.route = route;
 			this.routeIndex = routeIndex;
+			this.platformIndex = platformIndex;
 			this.platformId = platformId;
 			this.customDestination = customDestination == null ? "" : customDestination;
 		}

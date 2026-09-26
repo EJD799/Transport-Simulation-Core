@@ -20,7 +20,7 @@
 				<div class="row gap center">
 					<div class="row gap center" [pTooltip]="t('route.routeLength')" tooltipPosition="left">
 						<iconify-icon icon="mdi:distance" aria-hidden="true"></iconify-icon>
-						<div>{{ routeLength }}</div>
+						<div>{{ Math.round(routeLength) }} m</div>
 					</div>
 				</div>
 			}
@@ -28,7 +28,7 @@
 				<div class="row gap center">
 					<div class="row gap center" [pTooltip]="t('route.averageSpeed')" tooltipPosition="left">
 						<iconify-icon icon="mdi:speed" aria-hidden="true"></iconify-icon>
-						<div>{{ averageSpeed }}</div>
+						<div>{{ Math.round(averageSpeed * 3.6) }} km/h ({{ Math.round(averageSpeed) }} m/s)</div>
 					</div>
 				</div>
 			}

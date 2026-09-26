@@ -121,11 +121,14 @@ export class RouteVariationService extends SelectableDataServiceBase<void, Route
 	}
 
 	public getRouteLength() {
-
+		return this.selectedRoute()?.routeLength ?? 0;
 	}
 
 	public getAverageSpeed() {
-		
+		const routeLength = this.getRouteLength();
+		const duration = this.getTotalDurationSeconds();
+
+		return duration > 0 ? routeLength / duration : 0;
 	}
 }
 
