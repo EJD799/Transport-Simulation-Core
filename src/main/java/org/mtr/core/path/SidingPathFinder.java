@@ -109,7 +109,24 @@ public final class SidingPathFinder<T extends AreaBase<T, U>, U extends SavedRai
 					if (transportMode == TransportMode.AIRPLANE && angle1 != null && angle2 != null) {
 						final long heightDifference1 = cruisingAltitude - position1.getY();
 						final long heightDifference2 = cruisingAltitude - position2.getY();
-						final Position cruisingPosition1 = position1.offset(Math.round(angle1.cos * Math.abs(heightDifference1) * 4), heightDifference1, Math.round(angle1.sin * Math.abs(heightDifference1) * 4));
+						final Rail previousRail = Data.tryGet(
+							positionsToRail,
+							connectionDetailsList.get(i - 1).node().position,
+							position1
+						);
+
+						final boolean helicopterTakeoff = previousRail != null
+							&& previousRail.getTransportMode() == TransportMode.AIRPLANE
+							&& previousRail.isPlatform()
+							&& previousRail.canConnectRemotely();
+
+						final double takeoffDistanceMultiplier = helicopterTakeoff ? 0.1 : 4;
+
+						final Position cruisingPosition1 = position1.offset(
+							Math.round(angle1.cos * Math.abs(heightDifference1) * takeoffDistanceMultiplier),
+							heightDifference1,
+							Math.round(angle1.sin * Math.abs(heightDifference1) * takeoffDistanceMultiplier)
+						);
 						final Position cruisingPosition4 = position2.offset(Math.round(-angle2.cos * Math.abs(heightDifference2) * 4), heightDifference2, Math.round(-angle2.sin * Math.abs(heightDifference2) * 4));
 						final long turnArc = Math.min(MAX_AIRPLANE_TURN_ARC, cruisingPosition1.manhattanDistance(cruisingPosition4) / 8);
 
@@ -239,7 +256,7 @@ public final class SidingPathFinder<T extends AreaBase<T, U>, U extends SavedRai
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 			new ObjectArrayList<>(), AIRPLANE_SPEED, 0,
 			false, false, true, false, false, TransportMode.AIRPLANE
-		), 0, 0, stopIndex, position1, position2);
+		), 0, 0, stopIndex, 0, 0, position1, angle1, position2, angle2, true);
 	}
 
 	protected record PositionAndAngle(Position position, @Nullable Angle angle) {

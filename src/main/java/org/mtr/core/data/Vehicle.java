@@ -54,6 +54,8 @@ public class Vehicle extends VehicleSchema implements Utilities {
 	 */
 	private final boolean isClientside;
 
+	private final TransportMode transportMode;
+
 	public static final int MAX_POWER_LEVEL = 7;
 	public static final int POWER_LEVEL_RATIO = 5;
 	public static final int DOOR_MOVE_TIME = 3200;
@@ -68,6 +70,7 @@ public class Vehicle extends VehicleSchema implements Utilities {
 		this.siding = siding;
 		this.vehicleExtraData = vehicleExtraData;
 		this.isClientside = !(data instanceof Simulator);
+		this.transportMode = transportMode;
 	}
 
 	public Vehicle(VehicleExtraData vehicleExtraData, @Nullable Siding siding, ReaderBase readerBase, Data data) {
@@ -105,6 +108,20 @@ public class Vehicle extends VehicleSchema implements Utilities {
 
 	public boolean getReversed() {
 		return reversed;
+	}
+
+	public boolean getIsFlying() {
+		if (transportMode != TransportMode.AIRPLANE) {
+			return false;
+		}
+
+		for (final PathData pathData : vehicleExtraData.immutablePath) {
+			if (railProgress >= pathData.getStartDistance() && railProgress < pathData.getEndDistance()) {
+				return pathData.isAirbornePath;
+			}
+		}
+
+		return false;
 	}
 
 	public boolean closeToDepot() {

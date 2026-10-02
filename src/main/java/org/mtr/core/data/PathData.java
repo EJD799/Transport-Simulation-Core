@@ -21,6 +21,7 @@ public class PathData extends PathDataSchema implements ConditionalList {
 	private Rail rail;
 	private long getRailCacheCooldown = 0;
 	public final boolean reversePositions;
+	public final boolean isAirbornePath;
 
 	private static final Random RANDOM = new Random();
 
