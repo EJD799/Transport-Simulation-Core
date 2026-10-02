@@ -44,11 +44,10 @@ public abstract class PathFinder<T> {
 			final ConnectionDetails<T> prevConnectionDetails = Utilities.getElement(tempData, -1);
 			final T prevNode = prevConnectionDetails == null ? startNode : prevConnectionDetails.node;
 
-			T bestNode = null;
-			long bestIncrease = Long.MIN_VALUE;
-			long bestDuration = 0;
-			long bestWaitingTime = 0;
-			long bestRouteId = 0;
+			ConnectionDetails<T> bestRegularRail = null;
+			ConnectionDetails<T> bestPlatformRail = null;
+			long bestRegularIncrease = Long.MIN_VALUE;
+			long bestPlatformIncrease = Long.MIN_VALUE;
 
 			for (final ConnectionDetails<T> connectionDetails : getConnections(elapsedTime, prevNode, prevConnectionDetails == null ? null : prevConnectionDetails.routeId)) {
 				final T thisNode = connectionDetails.node;
@@ -59,15 +58,38 @@ public abstract class PathFinder<T> {
 				if (verifyTime(thisNode, elapsedTime + totalDuration)) {
 					final long increase = (getWeightFromEndNode(prevNode) - getWeightFromEndNode(thisNode)) / totalDuration;
 					globalBlacklist.put(thisNode, elapsedTime + totalDuration);
-					if (increase > bestIncrease) {
-						bestNode = thisNode;
-						bestIncrease = increase;
-						bestDuration = duration;
-						bestWaitingTime = waitingTime;
-						bestRouteId = connectionDetails.routeId;
+					if (connectionDetails.platformRail) {
+						if (increase > bestPlatformIncrease) {
+							bestPlatformRail = connectionDetails;
+							bestPlatformIncrease = increase;
+						}
+					} else {
+						if (increase > bestRegularIncrease) {
+							bestRegularRail = connectionDetails;
+							bestRegularIncrease = increase;
+						}
 					}
 				}
 			}
+
+			ConnectionDetails<T> bestConnection;
+
+			if (bestRegularRail != null && bestPlatformRail != null) {
+				if (bestRegularRail.railLength <= bestPlatformRail.railLength + 20) {
+					bestConnection = bestRegularRail;
+				} else {
+					bestConnection = bestPlatformRail;
+				}
+			} else if (bestRegularRail != null) {
+				bestConnection = bestRegularRail;
+			} else {
+				bestConnection = bestPlatformRail;
+			}
+
+			T bestNode = bestConnection == null ? null : bestConnection.node;
+			long bestDuration = bestConnection == null ? 0 : bestConnection.duration;
+			long bestWaitingTime = bestConnection == null ? 0 : bestConnection.waitingTime;
+			long bestRouteId = bestConnection == null ? 0 : bestConnection.routeId;
 
 			if (bestNode == null || bestDuration == 0) {
 				if (tempData.isEmpty()) {
@@ -113,13 +135,26 @@ public abstract class PathFinder<T> {
 		return lessThanOrEqualTo ? time <= blacklist.getOrDefault(node, Long.MAX_VALUE) : time < blacklist.getOrDefault(node, Long.MAX_VALUE);
 	}
 
-	protected record ConnectionDetails<T>(T node, long duration, long waitingTime, long routeId) {
+	protected record ConnectionDetails<T>(
+		T node,
+		long duration,
+		long waitingTime,
+		long routeId,
+		boolean platformRail,
+		double railLength
+	) {
 
 		protected ConnectionDetails(T node, long duration, long waitingTime, long routeId) {
+			this(node, duration, waitingTime, routeId, false, 0);
+		}
+
+		protected ConnectionDetails(T node, long duration, long waitingTime, long routeId, boolean platformRail, double railLength) {
 			this.node = node;
 			this.duration = Math.max(1, duration);
 			this.waitingTime = waitingTime;
 			this.routeId = routeId;
+			this.platformRail = platformRail;
+			this.railLength = railLength;
 		}
 	}
 }

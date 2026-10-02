@@ -60,7 +60,14 @@ public final class SidingPathFinder<T extends AreaBase<T, U>, U extends SavedRai
 			railConnections.forEach((position, rail) -> {
 				final double speedLimit = rail.getSpeedLimitMetersPerMillisecond(node.position);
 				if (speedLimit > 0 && (node.angle == null || node.angle == rail.getStartAngle(node.position) || rail.canTurnBack())) {
-					connections.add(new ConnectionDetails<>(new PositionAndAngle(position, rail.getStartAngle(position).getOpposite()), Math.round(rail.railMath.getLength() / speedLimit), 0, 0));
+					connections.add(new ConnectionDetails<>(
+						new PositionAndAngle(position, rail.getStartAngle(position).getOpposite()),
+						Math.round(rail.railMath.getLength() / speedLimit),
+						0,
+						0,
+						rail.isPlatform(),
+						rail.railMath.getLength()
+					));
 				}
 			});
 		}
